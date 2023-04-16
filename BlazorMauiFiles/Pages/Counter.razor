@@ -1,0 +1,48 @@
+﻿@page "/counter"
+@using CommunityToolkit.Maui.Storage
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="GetFolder">Get Folder</button>
+<button class="btn btn-primary" @onclick="GetFile">Get File</button>
+<br>
+<br>
+<img src="@ImageDataUrl" />
+<p>@Folder</p>
+
+@code {
+    private int currentCount = 0;
+    public string Folder;
+    public ImageSource File;
+    public string ImageDataUrl;
+    private async void GetFolder()
+    {
+        var folder = await FolderPicker.PickAsync(default);
+        if (folder != null)
+        {
+            Folder = folder.Folder.Name + " " + folder.Folder.Path;
+            StateHasChanged();
+        }
+    }
+
+    private async void GetFile()
+    {
+        var file = await FilePicker.PickAsync(new PickOptions
+            {
+                PickerTitle = "Pick image",
+                FileTypes = FilePickerFileType.Images,
+            });
+        if (file == null)
+            return;
+
+        var stream = await file.OpenReadAsync();
+        File = ImageSource.FromStream(() => stream);
+        var buffer = new byte[stream.Length];
+        await stream.ReadAsync(buffer, 0, (int)stream.Length);
+        ImageDataUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}";
+
+        StateHasChanged();
+    }
+}

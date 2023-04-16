@@ -1,0 +1,1 @@
+C:\Users\sfurl\source\repos\BlazorMauiFiles\BlazorMauiFiles\BlazorMauiFiles.csproj;x64
